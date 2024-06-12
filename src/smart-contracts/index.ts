@@ -2,9 +2,9 @@ import { z } from "zod"
 
 import {
   callContractMethodResponseSchema,
-  getTransactionSchema,
-  getTransactionResponseSchema,
   callContractMethodSchema,
+  getTransactionResponseSchema,
+  getTransactionSchema,
 } from "@smart-dev/schemas/transactions"
 
 export const smartContracts = ({
