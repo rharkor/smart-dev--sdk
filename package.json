@@ -27,10 +27,19 @@
   "bin": {
     "smart-dev": "./dist/cli.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "smart-dev",
+    "api",
+    "cli",
+    "sdk"
+  ],
+  "author": "HUORT Louis (https://louis.huort.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rharkor/smart-dev--sdk"
+  },
   "license": "ISC",
-  "description": "",
+  "description": "Smart Dev SDK to interact with the Smart Dev API",
   "devDependencies": {
     "pkgroll": "^2.1.1",
     "@semantic-release/changelog": "^6.0.3",
