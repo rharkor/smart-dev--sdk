@@ -33,12 +33,13 @@
     "cli",
     "sdk"
   ],
+  "homepage": "https://github.com/rharkor/smart-dev--sdk",
   "author": "HUORT Louis (https://louis.huort.com)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rharkor/smart-dev--sdk"
+    "url": "git+https://github.com/rharkor/smart-dev--sdk.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "description": "Smart Dev SDK to interact with the Smart Dev API",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
