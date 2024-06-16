@@ -1,7 +1,7 @@
 import { defaultEndpoint } from "./lib/constants"
 import { smartContracts } from "./smart-contracts"
 
-const smartDev = (params: { endpoint?: string; apiKeyId: string; apiKeySecret: string }) => {
+const getSmartDev = (params: { endpoint?: string; apiKeyId: string; apiKeySecret: string }) => {
   const endpoint = params.endpoint ?? defaultEndpoint
   return {
     smartContracts: smartContracts({
@@ -12,4 +12,4 @@ const smartDev = (params: { endpoint?: string; apiKeyId: string; apiKeySecret: s
   }
 }
 
-export default smartDev
+export default getSmartDev
