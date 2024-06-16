@@ -36,8 +36,8 @@ export const registerCallContractMethod = (smartContractsCommand: Command) => {
       },
       {
         type: "input",
-        name: "walletsFolderId",
-        message: "Enter the wallets folder ID",
+        name: "poolId",
+        message: "Enter the pool ID",
       },
       {
         type: "input",
@@ -45,7 +45,7 @@ export const registerCallContractMethod = (smartContractsCommand: Command) => {
         message: "Enter the encryption key for the wallets",
       },
     ]
-    const { smartContractId, method, methodParams, walletsFolderId, encryptionKey } = await inquirer.prompt(questions)
+    const { smartContractId, method, methodParams, poolId, encryptionKey } = await inquirer.prompt(questions)
     const smartDev = await getSmartDev({
       endpoint: options.endpoint,
       apiKeyId: options.apiKeyId,
@@ -61,15 +61,9 @@ export const registerCallContractMethod = (smartContractsCommand: Command) => {
       },
     ])
     let transactionParams: z.infer<ReturnType<typeof callContractMethodSchema>>["transactionParams"]
-    let walletsTags: z.infer<ReturnType<typeof callContractMethodSchema>>["walletsTags"]
     let version: z.infer<ReturnType<typeof callContractMethodSchema>>["version"]
     if (wantAdvancedParams.wantAdvancedParams) {
       const advancedQuestions = [
-        {
-          type: "input",
-          name: "walletsTags",
-          message: "Enter the wallets tags, e.g. ['tag1', 'tag2'], press enter to skip",
-        },
         {
           type: "input",
           name: "version",
@@ -77,7 +71,6 @@ export const registerCallContractMethod = (smartContractsCommand: Command) => {
         },
       ]
       const advancedAnswers = await inquirer.prompt(advancedQuestions)
-      walletsTags = advancedAnswers.walletsTags ? JSON.parse(advancedAnswers.walletsTags) : undefined
       version = advancedAnswers.version ? parseInt(advancedAnswers.version) : undefined
 
       const wantTransactionParams = await inquirer.prompt([
@@ -106,11 +99,10 @@ export const registerCallContractMethod = (smartContractsCommand: Command) => {
       smartContractId,
       method,
       methodParams: JSON.parse(methodParams),
-      walletsFolderId,
+      poolId,
       encryptionKey,
       transactionParams,
       version,
-      walletsTags,
     })
     if (res.data.status === "error") {
       logger.error(res.data.error.message)
