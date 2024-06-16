@@ -1,11 +1,18 @@
 import Conf from "conf"
+import envPaths from "env-paths"
 import inquirer from "inquirer"
+import * as path from "path"
 
 import pJson from "../../../../package.json"
+import { defaultEndpoint } from "../../../lib/constants"
+
+const projectName = "smart-dev"
+const cwd = envPaths(projectName).config
 
 const config = new Conf({
-  projectName: "smart-dev",
+  projectName,
   projectVersion: pJson.version,
+  cwd,
   schema: {
     apiKeyId: {
       type: "string",
@@ -21,6 +28,14 @@ const config = new Conf({
     },
   },
 })
+
+export const getConfigLocation = () => {
+  return path.join(cwd, "config.json")
+}
+
+export const resetConfig = () => {
+  config.clear()
+}
 
 export const getApiKeyId = () => {
   return config.get("apiKeyId") as string | undefined
@@ -83,13 +98,6 @@ export const getSertEndpoint = async () => {
   if (endpoint) {
     return endpoint
   }
-  const { endpoint: endpointAnswer } = await inquirer.prompt([
-    {
-      type: "input",
-      name: "endpoint",
-      message: "Enter the endpoint",
-    },
-  ])
-  storeEndpoint(endpointAnswer)
-  return endpointAnswer as string
+  storeEndpoint(defaultEndpoint)
+  return defaultEndpoint
 }
