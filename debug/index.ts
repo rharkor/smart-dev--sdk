@@ -48,6 +48,9 @@ const getAvailableNodeAddress = async () => {
       direction: "asc",
       resultKind: "boolean",
       methodParams: ["0xe3d8aB43Dc9FC21bB0c1DA13eC4DAe90C1108f95"],
+      transactionParams: {
+        from: "0xe3d8aB43Dc9FC21bB0c1DA13eC4DAe90C1108f95",
+      },
       resultKey: "0",
       // method: "getRandomNumber(uint256)",
       // direction: "asc",
