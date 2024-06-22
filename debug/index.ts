@@ -11,18 +11,19 @@ const executeContractMethod = async () => {
   })
 
   const res = await smartDev.smartContracts.callContractMethod({
-    poolId: "clxh8j8ua0001wact0t562zjs",
+    // poolId: "clxnirlhj0001ip8aqfun0rx1",
+    walletId: "clx1u8ekw0002cgk6r9mgv7vk",
     encryptionKey: process.env.SMART_DEV_ENCRYPTION_KEY as string,
     smartContractId: "clwt0th7q000036g9cak5rp6g",
     method: "tupleInput((string, uint256, bool))",
     methodParams: [{ status: "test", another: 10, valid: true }],
-    customSort: {
-      smartContractId: "clwt0th7q000036g9cak5rp6g",
-      method: "getRandomNumber(uint256)",
-      direction: "asc",
-      resultKind: "bigint",
-      methodParams: [10],
-    },
+    // customSort: {
+    //   smartContractId: "clwt0th7q000036g9cak5rp6g",
+    //   method: "getRandomNumber(uint256)",
+    //   direction: "asc",
+    //   resultKind: "bigint",
+    //   methodParams: [10],
+    // },
   })
 
   console.log(res)
@@ -62,4 +63,4 @@ const getAvailableNodeAddress = async () => {
   console.log(res)
 }
 
-getAvailableNodeAddress()
+executeContractMethod()
