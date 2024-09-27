@@ -2,11 +2,27 @@ import { z } from "zod"
 
 import { getAvailableNodeAddressResponseSchema, getAvailableNodeAddressSchema } from "@smart-dev/schemas/transactions"
 
+import { IApiMethodContext } from "../../utils/context"
+
+/**
+ * Fetches an available node address from a pool.
+ */
+export interface IGetAvailableNodeAddress extends IApiMethodContext {}
+
+/**
+ * Fetches an available node address from a pool.
+ */
+export interface IGetAvailableNodeAddressParams extends z.infer<ReturnType<typeof getAvailableNodeAddressSchema>> {}
+
+/**
+ * The response object for the getAvailableNodeAddress method.
+ */
+export interface IGetAvailableNodeAddressResponse
+  extends z.infer<ReturnType<typeof getAvailableNodeAddressResponseSchema>> {}
+
 export const getAvailableNodeAddress =
-  ({ apiKeyId, apiKeySecret, endpoint }: { endpoint: string; apiKeyId: string; apiKeySecret: string }) =>
-  async (
-    params: z.infer<ReturnType<typeof getAvailableNodeAddressSchema>>
-  ): Promise<z.infer<ReturnType<typeof getAvailableNodeAddressResponseSchema>>> => {
+  ({ apiKeyId, apiKeySecret, endpoint }: IGetAvailableNodeAddress) =>
+  async (params: IGetAvailableNodeAddressParams): Promise<IGetAvailableNodeAddressResponse> => {
     const res = await fetch(`${endpoint}/api/transactions/get-available-node-address`, {
       method: "POST",
       headers: {

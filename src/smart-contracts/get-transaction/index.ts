@@ -2,11 +2,34 @@ import { z } from "zod"
 
 import { getTransactionResponseSchema, getTransactionSchema } from "@smart-dev/schemas/transactions"
 
+import { IApiMethodContext } from "../../utils/context"
+
+/**
+ * Fetches a transaction from the Smart Dev API.
+ */
+export interface IGetTransactionInitParams extends IApiMethodContext {}
+
+/**
+ * The parameters for the getTransaction method.
+ */
+export interface IGetTransactionParams extends z.infer<ReturnType<typeof getTransactionSchema>> {
+  /**
+   * The transaction ID.
+   */
+  id: string
+}
+
+export type TTransaction = z.infer<ReturnType<typeof getTransactionResponseSchema>>["transaction"]
+
+/**
+ * The response object for the getTransaction method.
+ */
+export interface IGetTransactionResponse extends TTransaction {}
+
 export const getTransaction =
-  ({ apiKeyId, apiKeySecret, endpoint }: { endpoint: string; apiKeyId: string; apiKeySecret: string }) =>
-  async (
-    params: z.infer<ReturnType<typeof getTransactionSchema>>
-  ): Promise<z.infer<ReturnType<typeof getTransactionResponseSchema>>["transaction"]> => {
+  ({ apiKeyId, apiKeySecret, endpoint }: IGetTransactionInitParams) =>
+  async (params: IGetTransactionParams): Promise<IGetTransactionResponse> => {
+    // Fetch the transaction from the Smart Dev API.
     const res = await fetch(`${endpoint}/api/transactions/${params.id}`, {
       headers: {
         "x-api-key-id": apiKeyId,

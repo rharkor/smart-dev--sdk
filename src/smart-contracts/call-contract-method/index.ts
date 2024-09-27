@@ -6,18 +6,74 @@ import {
   getTransactionResponseSchema,
 } from "@smart-dev/schemas/transactions"
 
+import { IApiMethodContext } from "../../utils/context"
 import { getTransaction } from "../get-transaction"
 
+/**
+ * Calls a method on a smart contract.
+ */
+export interface ICallContractMethod extends IApiMethodContext {}
+
+/**
+ * The parameters for the callContractMethod method.
+ */
+export type TCallContractMethodParams = z.infer<ReturnType<typeof callContractMethodSchema>>
+
+/**
+ * The parameters for the waitForTransactionToBeMined method.
+ */
+export interface IWaitForTransactionToBeMinedParams {
+  /**
+   * The interval in milliseconds to poll the transaction status.
+   *
+   * @default 3000
+   */
+  pollingInterval: number
+
+  /**
+   * The maximum time in milliseconds to wait for the transaction to be mined. If the transaction is not mined within this time, the function will throw an error.
+   *
+   * @default 600000 (10 minutes)
+   */
+  maxTimeout: number
+}
+
+/**
+ * The result of the waitForTransactionToBeMined method.
+ */
+export type TWaitForTransactionToBeMinedResult = z.infer<ReturnType<typeof getTransactionResponseSchema>>["transaction"]
+
+/**
+ * Waits for the transaction to be mined.
+ */
+export type TWaitForTransactionToBeMined = (
+  /**
+   * The parameters for the waitForTransactionToBeMined method.
+   */
+  params?: IWaitForTransactionToBeMinedParams
+) => Promise<TWaitForTransactionToBeMinedResult>
+
+/**
+ * The response object for the callContractMethod method.
+ */
+export interface ICallContractMethodResponse {
+  /**
+   * The response data. Please not that at this point the transaction is not mined yet.
+   */
+  data: z.infer<ReturnType<typeof callContractMethodResponseSchema>>
+
+  /**
+   * Waits for the transaction to be mined.
+   */
+  wait: TWaitForTransactionToBeMined
+}
+
+/**
+ * Calls a method on a smart contract.
+ */
 export const callContractMethod =
-  ({ apiKeyId, apiKeySecret, endpoint }: { endpoint: string; apiKeyId: string; apiKeySecret: string }) =>
-  async (
-    params: z.infer<ReturnType<typeof callContractMethodSchema>>
-  ): Promise<{
-    data: z.infer<ReturnType<typeof callContractMethodResponseSchema>>
-    wait: (params?: {
-      pollingInterval?: number
-    }) => Promise<z.infer<ReturnType<typeof getTransactionResponseSchema>>["transaction"]>
-  }> => {
+  ({ apiKeyId, apiKeySecret, endpoint }: ICallContractMethod) =>
+  async (params: TCallContractMethodParams): Promise<ICallContractMethodResponse> => {
     const res = await fetch(`${endpoint}/api/transactions/call-contract-method`, {
       method: "POST",
       headers: {
@@ -38,12 +94,16 @@ export const callContractMethod =
     }
 
     //* Wait to be mined
-    const wait = async (params?: { pollingInterval?: number }) => {
-      const pollingInterval = params?.pollingInterval ?? 3000
+    const wait = async (
+      params: IWaitForTransactionToBeMinedParams = {
+        pollingInterval: 3000,
+        maxTimeout: 600000, //? 10 minutes
+      }
+    ) => {
+      const pollingInterval = params.pollingInterval
       const start = Date.now()
-      //? Max timeout 5 minutes
-      const timeout = 1000 * 60 * 5
-      while (Date.now() - start < timeout) {
+      // Start polling the transaction status
+      while (Date.now() - start < params.maxTimeout) {
         const { transactionId } = parsed.data.meta
         const transaction = await getTransaction({ apiKeyId, apiKeySecret, endpoint })({ id: transactionId })
         if (transaction.status === "SUCCESS") {
