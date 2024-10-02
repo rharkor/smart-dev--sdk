@@ -1,15 +1,43 @@
 import { defaultEndpoint } from "./lib/constants"
+import { pingEndpoint } from "./utils/endpoint"
 import { smartContracts } from "./smart-contracts"
+
+/**
+ * Configuration options for the Smart Dev SDK.
+ */
+export interface IGetSmartDevParams {
+  /**
+   * Custom URL for the Smart Dev API (usefull for beta testing).
+   */
+  endpoint?: string
+
+  /**
+   * Your Smart Dev API key ID.
+   */
+  apiKeyId: string
+
+  /**
+   * Your Smart Dev API secret key.
+   */
+  apiKeySecret: string
+}
+
+/**
+ * The Smart Dev SDK instance.
+ */
+export interface ISmartDev {
+  /**
+   * The Smart Contracts module.
+   */
+  smartContracts: ReturnType<typeof smartContracts>
+}
 
 /**
  * Creates and initializes an instance of the Smart Dev SDK.
  *
- * @param {object} params - Configuration options for the Smart Dev SDK.
- * @param {string} params.endpoint - The base URL for the Smart Dev API. If not provided, defaults to the value from `lib/constants`.
- * @param {string} params.apiKeyId - Your Smart Dev API key ID.
- * @param {string} params.apiKeySecret - Your Smart Dev API secret key.
+ * @param params - Configuration options for the Smart Dev SDK.
  *
- * @returns {object} An object containing the initialized Smart Dev SDK instance.
+ * @returns An object containing the Smart Dev SDK modules.
  *
  * @example
  * ```typescript
@@ -18,23 +46,19 @@ import { smartContracts } from "./smart-contracts"
  * const apiKeyId = 'YOUR_API_KEY_ID'
  * const apiKeySecret = 'YOUR_API_SECRET_KEY'
  *
- * const smartDev = getSmartDev({
+ * const smartDev = await getSmartDev({
  *   apiKeyId,
  *   apiKeySecret,
  * })
- *
- * // Use the smartDev object to interact with Smart Dev smart contracts
- * smartDev.smartContracts.callContractMethod(...)
  * ```
  */
-const getSmartDev = (params: {
-  endpoint?: string
-  apiKeyId: string
-  apiKeySecret: string
-}): {
-  smartContracts: ReturnType<typeof smartContracts>
-} => {
+const getSmartDev = async (params: IGetSmartDevParams): Promise<ISmartDev> => {
   const endpoint = params.endpoint ?? defaultEndpoint
+
+  if (!(await pingEndpoint(endpoint))) {
+    throw new Error(`The Smart Dev API is not available at ${endpoint}`)
+  }
+
   return {
     smartContracts: smartContracts({
       endpoint,
